@@ -24,6 +24,12 @@ class Usuario(AbstractUser):
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
 
+    # Método sobrescrito para forzar el rol de administrador a los superusuarios
+    def save(self, *args, **kwargs):
+        if self.is_superuser:
+            self.rol = 'administrador'
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.get_full_name() or self.username} ({self.get_rol_display()})"
 
@@ -38,5 +44,3 @@ class Usuario(AbstractUser):
     @property
     def es_recepcionista(self):
         return self.rol == 'recepcionista'
-
-

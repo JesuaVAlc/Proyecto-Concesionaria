@@ -5,17 +5,30 @@
 1. Clonar el repo
 2. Crear un entorno virtual y activarlo
 3. Instalar las dependencias del requirements
+```bash
     pip install -r requirements.txt
+```
 4. Aplicar migraciones
+```bash
     python manage.py migrate
-5. Crear un superusuario para poder acceder a acciones de admin en [https](http://127.0.0.1:8000/admin)
+```
+5. Crear un superusuario para poder acceder a acciones de admin en http://127.0.0.1:8000/admin
+```bash
     python manage.py createsuperuser
+```
 6. Iniciar el server
+```bash
     python manage.py runserver
+```
+7. Abrir en el navegador**
+```
+http://127.0.0.1:8000/usuarios/registro/
+```
 
 ## Primer Sprint - Creación de usuario y login
 - Framework utilizado: Django 
 ### Distribución de las carpetas
+```
 Concesionaria/
 ├── core/                   ← Configuración principal del proyecto
 │   ├── settings.py         ← Configuraciones globales del proyecto
@@ -40,6 +53,8 @@ Concesionaria/
 ├── manage.py
 ├── requirements.txt
 └── README.md
+```
+
 
 ### URLs Disponibles hasta el momento
 | URL | Descripción |
