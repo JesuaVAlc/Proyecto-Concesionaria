@@ -118,13 +118,17 @@
 </div>
 
     <script>
-        // Mostrar requisitos de contraseña al hacer foco en el campo
-        const campoPassword = document.getElementById('{{ form.password1.id_for_label }}');
-        const requisitos = document.getElementById('requisitos-password');
-        const registroExitoso = {{ registro_exitoso|yesno:"true,false" }};
-        const registroFallido = {{ registro_fallido|yesno:"true,false" }};
-        const overlay = document.getElementById('modal-overlay');
+    // Validamos que el campo exista para que no rompa el código
+    const campoPassword = document.getElementById('{{ form.password1.id_for_label }}');
+    const requisitos = document.getElementById('requisitos-password');
+    const overlay = document.getElementById('modal-overlay');
 
+    // SOLUCIÓN: Usamos etiquetas lógicas de Django para inyectar los booleanos de forma 100% segura
+    const registroExitoso = {% if registro_exitoso %}true{% else %}false{% endif %};
+    const registroFallido = {% if registro_fallido %}true{% else %}false{% endif %};
+
+    // Listeners para la contraseña
+    if (campoPassword && requisitos) {
         campoPassword.addEventListener('focus', function() {
             requisitos.style.display = 'block';
         });
@@ -132,8 +136,10 @@
         campoPassword.addEventListener('blur', function() {
             requisitos.style.display = 'none';
         });
+    }
 
-       if (registroExitoso) {
+    // Lógica del modal de Éxito
+    if (registroExitoso) {
         overlay.style.display = 'flex';
         document.getElementById('modal-exito').style.display = 'block';
 
@@ -141,7 +147,8 @@
         const contador = document.getElementById('contador');
         const intervalo = setInterval(() => {
             segundos--;
-            contador.textContent = segundos;
+            if (contador) contador.textContent = segundos;
+            
             if (segundos === 0) {
                 clearInterval(intervalo);
                 window.location.href = "{% url 'login' %}";
@@ -149,14 +156,14 @@
         }, 1000);
     }
 
+    // Lógica del modal de Error
     if (registroFallido) {
         overlay.style.display = 'flex';
         document.getElementById('modal-error').style.display = 'block';
     }
 
+    // Cerrar el modal
     function cerrarModal() {
-        overlay.style.display = 'none';
+        if (overlay) overlay.style.display = 'none';
     }
-    </script>
-</body>
-</html>
+</script>

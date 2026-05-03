@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <!-- Usamos 'default' por si el usuario aún no tiene nombre registrado -->
+    <h1>Bienvenido, {{ usuario.get_full_name|default:usuario.username }}</h1>
+    <p>Correo: {{ usuario.email }}</p>
+    
+    <!-- Validamos si es superusuario o administrador -->
+    <p>Rol: 
+        {% if usuario.is_superuser or usuario.es_administrador %}
+            Administrador (Superusuario)
+        {% else %}
+            {{ usuario.get_rol_display }}
+        {% endif %}
+    </p>
+
+    <hr>
+
+    <h2>Módulos del sistema</h2>
+
+    <!-- VISTA EXCLUSIVA PARA ADMINISTRADORES -->
+    {% if usuario.is_superuser or usuario.es_administrador %}
+        <ul>
+            <li>✅ Gestión de Usuarios — Sprint 1</li>
+            <li>🔜 Control de Inventario Total — Sprint 2</li>
+            <li>🔜 Reportes de Ventas — Sprint 3</li>
+            <li>🔜 Gestión de Mantenimiento — Sprint 4</li>
+        </ul>
+        <br>
+        <p><em>* Tienes acceso total al sistema.</em></p>
+
+    <!-- VISTA PARA CLIENTES NORMALES -->
+    {% else %}
+        <ul>
+            <li>✅ Mi Perfil</li>
+            <li>🔜 Ver mis vehículos registrados</li>
+            <li>🔜 Ver mi historial de mantenimientos</li>
+        </ul>
+    {% endif %}
+
+    <hr>
+    
+    <!-- IMPORTANTE: Asegúrate de que el 'name' en tu urls.py para cerrar sesión sea 'cerrar_sesion' -->
+    <a href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
+
+    <!-- VISTA EXCLUSIVA PARA ADMINISTRADORES -->
+    {% if usuario.is_superuser or usuario.es_administrador %}
+        
+        <h3>Gestión de Usuarios (Sprint 1)</h3>
+        
+        <!-- NUEVA TABLA CON ESTADOS Y BOTONES DE SUSPENDER -->
+        <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%; max-width: 900px; text-align: left;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Recorremos la lista de usuarios que nos envió views.py -->
+                {% for u in lista_usuarios %}
+                <tr>
+                    <td>{{ u.get_full_name|default:"-" }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.get_rol_display }}</td>
+                    
+                    <!-- NUEVA COLUMNA: Mostramos el estado visualmente -->
+                    <td>
+                        {% if u.is_active %}
+                            <span style="color: green; font-weight: bold;">Activo</span>
+                        {% else %}
+                            <span style="color: gray; font-weight: bold;">Suspendido</span>
+                        {% endif %}
+                    </td>
+                    
+                    <!-- COLUMNA DE ACCIONES: Ahora tiene dos botones lado a lado -->
+                    <td>
+                        <div style="display: flex; gap: 10px;">
+                            
+                            <!-- Botón de Suspender/Activar -->
+                            <form action="{% url 'toggle_estado_usuario' u.id %}" method="POST">
+                                {% csrf_token %}
+                                {% if u.is_active %}
+                                    <button type="submit" style="color: black; background-color: #ffc107; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                        Suspender
+                                    </button>
+                                {% else %}
+                                    <button type="submit" style="color: white; background-color: #28a745; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                        Activar
+                                    </button>
+                                {% endif %}
+                            </form>
+
+                            <!-- Botón de Eliminar original -->
+                            <form action="{% url 'eliminar_usuario' u.id %}" method="POST" onsubmit="return confirm('¿Estás totalmente seguro de que deseas eliminar a {{ u.email }}? Esta acción no se puede deshacer.');">
+                                {% csrf_token %}
+                                <button type="submit" style="color: white; background-color: #dc3545; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                    Eliminar
+                                </button>
+                            </form>
+
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center;">No hay otros usuarios registrados en el sistema.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <br>
+        <p><strong>Próximos módulos:</strong></p>
+        <ul>
+            <li>🔜 Control de Inventario Total — Sprint 2</li>
+            <li>🔜 Reportes de Ventas — Sprint 3</li>
+            <li>🔜 Gestión de Mantenimiento — Sprint 4</li>
+        </ul>
+  
+    {% endif %} <!-- ETIQUETA IF CERRADA CORRECTAMENTE -->
+
+</body>
+</html>
