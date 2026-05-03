@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Bienvenido, {{ usuario.get_full_name }}</h1>
+    <p>Correo: {{ usuario.email }}</p>
+    <p>Rol: {{ usuario.get_rol_display }}</p>
+
+    <hr>
+
+    <h2>Módulos del sistema</h2>
+    <ul>
+        <li>✅ Usuarios — Sprint 1</li>
+        <li>🔜 Inventario — Sprint 2</li>
+        <li>🔜 Ventas — Sprint 3</li>
+        <li>🔜 Mantenimiento — Sprint 4</li>
+    </ul>
+
+    <hr>
+    <a href="{% url 'logout' %}">Cerrar sesión</a>
+</body>
+</html>
