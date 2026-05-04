@@ -1,0 +1,241 @@
+/* Variables de estilo para la Concesionaria */
+:root {
+    --primary-red: #d32f2f;
+    --dark-bg: #1a1a1a;
+    --card-bg: #ffffff;
+    --text-main: #333333;
+    --text-light: #666666;
+    --border-color: #e0e0e0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--dark-bg);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
+                      url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1920'); 
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: var(--text-main);
+    position: relative;
+}
+
+/* --- TARJETA CONTENEDORA (LOGIN Y REGISTRO) --- */
+.container-card {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    width: 100%;
+    max-width: 400px;
+    border-top: 5px solid var(--primary-red);
+    position: relative;
+    z-index: 10;
+}
+
+.container-card h1 {
+    text-align: center;
+    color: var(--dark-bg);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+}
+
+/* --- SOLUCIÓN PARA INPUTS DE DJANGO (ATRAPADOS SIN CLASES) --- */
+.container-card input[type="text"], 
+.container-card input[type="password"], 
+.container-card input[type="email"],
+.container-card select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+    display: block;
+    background-color: white;
+    color: var(--text-main);
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.container-card input:focus {
+    outline: none;
+    border-color: var(--primary-red);
+}
+
+.container-card label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--text-main);
+}
+
+/* --- BOTÓN CERRAR SESIÓN (PARA DASHBOARD) --- */
+.btn-cerrar {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.btn-cerrar:hover {
+    background-color: var(--primary-red);
+    border-color: var(--primary-red);
+    transform: translateY(-2px);
+}
+
+/* --- DASHBOARD WRAPPER --- */
+.dashboard-wrapper {
+    max-width: 1100px;
+    width: 90%;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.98);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+    color: #1a1a1a;
+    border-top: 6px solid var(--primary-red);
+}
+
+.header-flex {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+}
+
+.user-welcome h1 {
+    text-align: left;
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    color: #1a1a1a;
+    font-weight: 800;
+}
+
+.user-meta {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: var(--text-light);
+}
+
+.role-badge {
+    background: #f0f0f0;
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    margin-left: 5px;
+    font-weight: bold;
+    color: #444;
+}
+
+/* --- TABLAS Y ELEMENTOS COMUNES --- */
+.tabla-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+}
+
+.tabla-usuarios th {
+    background-color: #222;
+    color: #fff;
+    padding: 15px;
+    text-align: left;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.tabla-usuarios td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-red);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover { background-color: #b71c1c; }
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.badge-activo { background: #d4edda; color: #155724; }
+.badge-suspendido { background: #e2e3e5; color: #383d41; }
+
+.btn-accion {
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    font-size: 0.8rem;
+    width: auto; /* Para que no ocupen el 100% en las tablas */
+}
+
+.btn-suspender { background-color: #ffc107; color: #000; }
+.btn-activar { background-color: #28a745; }
+.btn-eliminar { background-color: #dc3545; }
+
+.flex-acciones { display: flex; gap: 10px; }
+
+/* Mensajes y enlaces */
+.mensaje-exito { color: #2e7d32; background: #e8f5e9; padding: 10px; border-radius: 4px; text-align: center; margin-bottom: 15px; }
+p { text-align: center; margin-top: 1.5rem; font-size: 0.9em; color: var(--text-light); }
+a { color: var(--primary-red); text-decoration: none; font-weight: bold; }
+a:hover { text-decoration: underline; }
+
+/* MODAL DE ERROR */
+#modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: white;
+    color: black;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 380px;
+    width: 90%;
+    border-top: 8px solid var(--primary-red);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
