@@ -25,7 +25,7 @@
 http://127.0.0.1:8000/usuarios/registro/
 ```
 
-## Primer Sprint - Creación de usuario y login
+## Segundo Sprint - Gestión de inventario
 - Framework utilizado: Django 
 ### Distribución de las carpetas
 ```
@@ -34,18 +34,9 @@ Concesionaria/
 │   ├── settings.py         ← Configuraciones globales del proyecto
 │   ├── urls.py             ← Aqui se configuran las URLs que direccionan a los modulos
 │   └── wsgi.py
-├── apps/                   ← Aplicaciones del sistema = Historias de usuario
-│   ├── init.py
+├── 
 │   ├── usuarios/           ← Sprint 1: Registro e inicio de sesión
-│   │   ├── migrations/
-│   │   ├── templates/
-│   │   ├── admin.py
-│   │   ├── apps.py
-│   │   ├── forms.py
-│   │   ├── models.py
-│   │   ├── urls.py
-│   │   └── views.py
-│   ├── inventario/         ← Sprint 2: Gestión de inventario (pendiente)
+│   ├── inventario/         ← Sprint 2: Gestión de inventario 
 │   ├── ventas/             ← Sprint 3: Gestión de ventas (pendiente)
 │   └── mantenimiento/      ← Sprint 4: Gestión de mantenimiento (pendiente)
 ├── templates/              ← Templates de los diferentes modulos o historias de usuario
@@ -61,8 +52,9 @@ Concesionaria/
 |-----|-------------|
 | `/users/registro/` | Crear cuenta |
 | `/users/login/` | Iniciar sesión |
-| `/users/dashboard/` | Panel principal |
-| `/admin/` | Panel de administración Django |
+| `/dashboard/` | Panel principal |
+| `/inventario/` | Revisar, ingresar, actualizar, borrar autos |
+
 
 ## Nota
 - Entren al panel de admin con la URL y las credenciales de superusuario para que puedan ver si es que se les creó los usuarios

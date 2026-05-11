@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Inventario</title>
+</head>
+<body>
+      <a href="{% url 'cerrar_sesion' %}" class="btn-cerrar">Cerrar Sesión</a>
+
+    <div class="dashboard-wrapper">
+        <header class="header-flex">
+            <div class="user-welcome">
+                <h1>INVENTARIO DE VEHÍCULOS</h1>
+            </div>
+        </header>
+
+        <a href="{% url 'crear_vehiculo' %}">+ Agregar vehículo</a>
+
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Chasis</th>
+                    <th>Año</th>
+                    <th>Precio</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehiculo in vehiculos %}
+                <tr>
+                    <td>
+                        {% if vehiculo.imagen %}
+                            <img src="{{ vehiculo.imagen.url }}" width="80">
+                        {% else %}
+                            Sin imagen
+                        {% endif %}
+                    </td>
+                    <td>{{ vehiculo.marca }}</td>
+                    <td>{{ vehiculo.modelo }}</td>
+                    <td>{{ vehiculo.chasis }}</td>
+                    <td>{{ vehiculo.anio }}</td>
+                    <td>${{ vehiculo.precio }}</td>
+                    <td>{{ vehiculo.get_estado_display }}</td>
+                    <td>
+                        <div class="flex-acciones">
+                            <a href="{% url 'actualizar_vehiculo' vehiculo.pk %}" class="btn-accion btn-activar">Editar</a>
+
+                            <form action="{% url 'eliminar_vehiculo' vehiculo.pk %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-accion btn-eliminar">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align:center; padding:30px; color:#666;">
+                        No hay vehículos registrados aún.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p><a href="{% url 'dashboard' %}">Volver al dashboard</a></p>
+    </div>
+</body>
+</html>

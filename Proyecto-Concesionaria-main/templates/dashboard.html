@@ -91,16 +91,27 @@
                 </table>
 
             {% else %}
-                <!-- VISTA PARA CLIENTES -->
+                <!-- VISTA PARA CLIENTES Y OTROS ROLES-->
                 <div style="display: grid; gap: 15px;">
                     <div style="padding: 20px; background: #f9f9f9; border-radius: 10px; border-left: 5px solid #28a745;">
                         <h4 style="margin: 0 0 5px 0;">✅ Mi Perfil</h4>
                         <p style="margin: 0; font-size: 0.85rem; color: #666;">Gestiona tus datos personales y contraseña.</p>
                     </div>
-                    <div style="padding: 20px; background: #f9f9f9; border-radius: 10px; border-left: 5px solid #ccc;">
-                        <h4 style="margin: 0 0 5px 0; color: #999;">🔜 Mis Vehículos</h4>
-                        <p style="margin: 0; font-size: 0.85rem; color: #999;">Próximamente podrás ver tus autos adquiridos.</p>
-                    </div>
+
+                    <a href="{% url 'lista_vehiculos' %}" style="text-decoration: none; color: inherit; display: block;">
+                        <div style="padding: 20px; background: #f9f9f9; border-radius: 10px; border-left: 5px solid var(--primary-red); transition: transform 0.2s;" 
+                            onmouseover="this.style.transform='translateX(10px)'" onmouseout="this.style.transform='translateX(0)'">
+                            
+                            {% if usuario.rol == 'cliente' %}
+                                <h4 style="margin: 0 0 5px 0; color: #1a1a1a;">🚗 Vehículos Disponibles</h4>
+                                <p style="margin: 0; font-size: 0.85rem; color: #666;">Explora nuestro catálogo y encuentra tu próximo auto.</p>
+                            {% else %}
+                                <h4 style="margin: 0 0 5px 0; color: #1a1a1a;">📦 Inventario de Vehículos</h4>
+                                <p style="margin: 0; font-size: 0.85rem; color: #666;">Gestionar el stock, precios y estados de las unidades.</p>
+                            {% endif %}
+                        </div>
+                    </a>
+
                     <div style="padding: 20px; background: #f9f9f9; border-radius: 10px; border-left: 5px solid #ccc;">
                         <h4 style="margin: 0 0 5px 0; color: #999;">🔜 Ver mi historial de mantenimientos</h4>
                         <p style="margin: 0; font-size: 0.85rem; color: #999;">Próximamente podrás ver el historial de mantenimiento.</p>

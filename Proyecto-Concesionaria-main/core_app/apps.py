@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-class InventarioConfig(AppConfig):
+class CoreAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'inventario'
-    label = 'inventario'
+    name = 'core_app'
+    label = 'core_app'

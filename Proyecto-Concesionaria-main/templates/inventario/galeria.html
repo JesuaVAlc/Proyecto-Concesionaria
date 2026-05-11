@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Vehículos disponibles</title>
+</head>
+<body>
+   <a href="{% url 'cerrar_sesion' %}" class="btn-cerrar">Cerrar Sesión</a>
+
+    <div class="dashboard-wrapper">
+        <header class="header-flex">
+            <div class="user-welcome">
+                <h1>VEHÍCULOS DISPONIBLES</h1>
+            </div>
+        </header>
+
+        <div class="galeria-grid">
+            {% for vehiculo in vehiculos %}
+            <div class="vehiculo-card">
+                <div class="vehiculo-imagen">
+                    {% if vehiculo.imagen %}
+                        <img src="{{ vehiculo.imagen.url }}" alt="{{ vehiculo.marca }}">
+                    {% else %}
+                        <div class="placeholder-img">Sin Imagen</div>
+                    {% endif %}
+                </div>
+                <div class="vehiculo-info">
+                    <span>{{ vehiculo.get_estado_display }}</span>
+                    <h3>{{ vehiculo.marca }} {{ vehiculo.modelo }}</h3>
+                    <p class="anio-text">Año: {{ vehiculo.anio }}</p>
+                    <p class="precio-tag">${{ vehiculo.precio }}</p>
+                    <button class="btn-accion btn-activar" style="width: 100%; margin-top: 10px;">Ver más</button>
+                </div>
+            </div>
+            {% empty %}
+                <p style="color: white; grid-column: 1/-1; text-align: center;">No hay vehículos registrados.</p>
+            {% endfor %}
+        </div>
+
+        <p><a href="{% url 'dashboard' %}">Volver al Dashboard</a></p>
+    </div>
+</body>
+</html>

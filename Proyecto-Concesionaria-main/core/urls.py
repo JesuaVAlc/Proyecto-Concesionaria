@@ -17,9 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from usuarios.views import inicio
+from django.conf import settings
+from django.conf.urls.static import static  
 
 urlpatterns = [
     path('', inicio, name='inicio'),
     path('admin/', admin.site.urls),
     path('users/', include('usuarios.urls')),
-]
+    path('inventario/', include('inventario.urls')),
+    path('', include('core_app.urls')),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -62,37 +62,37 @@ def cerrar_sesion(request):
     logout(request)
     return redirect('login')
 
-@never_cache
-@login_required
-def dashboard(request):
-    contexto = {'usuario': request.user}
+# @never_cache
+# @login_required
+# def dashboard(request):
+#     contexto = {'usuario': request.user}
     
-    if request.user.is_superuser or request.user.es_administrador:
-        contexto['lista_usuarios'] = Usuario.objects.exclude(id=request.user.id)
+#     if request.user.is_superuser or request.user.es_administrador:
+#         contexto['lista_usuarios'] = Usuario.objects.exclude(id=request.user.id)
         
-    return render(request, 'dashboard.html', contexto)
+#     return render(request, 'dashboard.html', contexto)
 
-@never_cache
-@login_required
-def eliminar_usuario(request, user_id):
-    if not (request.user.is_superuser or request.user.es_administrador):
-        return redirect('dashboard')
+# @never_cache
+# @login_required
+# def eliminar_usuario(request, user_id):
+#     if not (request.user.is_superuser or request.user.es_administrador):
+#         return redirect('dashboard')
     
-    if request.method == 'POST':
-        usuario_a_eliminar = get_object_or_404(Usuario, id=user_id)
-        usuario_a_eliminar.delete()
+#     if request.method == 'POST':
+#         usuario_a_eliminar = get_object_or_404(Usuario, id=user_id)
+#         usuario_a_eliminar.delete()
         
-    return redirect('dashboard')
+#     return redirect('dashboard')
 
-@never_cache
-@login_required
-def toggle_estado_usuario(request, user_id):
-    if not (request.user.is_superuser or request.user.es_administrador):
-        return redirect('dashboard')
+# @never_cache
+# @login_required
+# def toggle_estado_usuario(request, user_id):
+#     if not (request.user.is_superuser or request.user.es_administrador):
+#         return redirect('dashboard')
     
-    if request.method == 'POST':
-        usuario_a_modificar = get_object_or_404(Usuario, id=user_id)
-        usuario_a_modificar.is_active = not usuario_a_modificar.is_active
-        usuario_a_modificar.save()
+#     if request.method == 'POST':
+#         usuario_a_modificar = get_object_or_404(Usuario, id=user_id)
+#         usuario_a_modificar.is_active = not usuario_a_modificar.is_active
+#         usuario_a_modificar.save()
         
-    return redirect('dashboard')
+#     return redirect('dashboard')
