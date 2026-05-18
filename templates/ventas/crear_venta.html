@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Nueva Venta</title>
+</head>
+<body>
+    <div class="dashboard-wrapper" style="max-width: 800px;">
+        <h2>🛒 Registrar Nueva Venta</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-red);">
+                <h3>1. Selección de Vehículo</h3>
+                <select name="vehiculo_id" required style="width: 100%; padding: 10px;">
+                    <option value="">-- Seleccione un vehículo disponible --</option>
+                    {% for v in vehiculos %}
+                        <option value="{{ v.id }}">{{ v.marca }} {{ v.modelo }} - Chasis: {{ v.chasis }} (${{ v.precio }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-red);">
+                <h3>2. Selección de Cliente</h3>
+                <select id="select-cliente" name="cliente_id" required style="width: 100%; padding: 10px;" onchange="llenarDatosCliente()">
+                    <option value="">-- Buscar y seleccionar cliente registrado --</option>
+                    {% for c in clientes %}
+                        <option value="{{ c.id }}">{{ c.first_name }} {{ c.last_name }} ({{ c.email }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-red);">
+                <h3>3. Datos para el Comprobante (SRI)</h3>
+                
+                <label>Tipo de Comprobante:</label>
+                <select name="tipo_comprobante" id="tipo-comprobante" required style="width: 100%; padding: 10px;" onchange="toggleCamposFacturacion()">
+                    <option value="boleta">Boleta de Venta (Consumidor Final)</option>
+                    <option value="factura">Factura (Con RUC)</option>
+                </select>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                    <div>
+                        <label id="label-identificacion">Cédula de Identidad:</label>
+                        <input type="text" name="identificacion" id="ident-input" required style="width: 100%; padding: 10px;">
+                    </div>
+                    <div>
+                        <label id="label-nombre">Nombre Completo:</label>
+                        <input type="text" name="nombre_razon_social" id="nombre-input" required style="width: 100%; padding: 10px;">
+                    </div>
+                    <div>
+                        <label>Teléfono:</label>
+                        <input type="text" name="telefono_contacto" id="tel-input" style="width: 100%; padding: 10px;">
+                    </div>
+                    <div>
+                        <label>Email:</label>
+                        <input type="email" name="correo_contacto" id="email-input" style="width: 100%; padding: 10px;">
+                    </div>
+                    <div id="div-direccion" style="display: none; grid-column: span 2;">
+                        <label>Dirección Fiscal:</label>
+                        <input type="text" name="direccion_fiscal" id="dir-input" style="width: 100%; padding: 10px;">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" style="width: 100%; font-size: 1.2rem;">Generar Comprobante</button>
+            <p style="text-align: center; margin-top: 15px;"><a href="{% url 'dashboard' %}">Cancelar y volver</a></p>
+        </form>
+    </div>
+
+    <script>
+        // Diccionario oculto con los datos de clientes para el autollenado
+        const datosClientes = {
+            {% for c in clientes %}
+            "{{ c.id }}": {
+                "nombre": "{{ c.first_name }} {{ c.last_name }}",
+                "cedula": "{{ c.cedula|default:'' }}",
+                "telefono": "{{ c.telefono|default:'' }}",
+                "email": "{{ c.email }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        };
+
+        function llenarDatosCliente() {
+            const id = document.getElementById('select-cliente').value;
+            if(id && datosClientes[id]) {
+                document.getElementById('nombre-input').value = datosClientes[id].nombre;
+                document.getElementById('ident-input').value = datosClientes[id].cedula;
+                document.getElementById('tel-input').value = datosClientes[id].telefono;
+                document.getElementById('email-input').value = datosClientes[id].email;
+            } else {
+                document.getElementById('nombre-input').value = '';
+                document.getElementById('ident-input').value = '';
+                document.getElementById('tel-input').value = '';
+                document.getElementById('email-input').value = '';
+            }
+        }
+
+        function toggleCamposFacturacion() {
+            const tipo = document.getElementById('tipo-comprobante').value;
+            const divDireccion = document.getElementById('div-direccion');
+            const dirInput = document.getElementById('dir-input');
+            const labelIdent = document.getElementById('label-identificacion');
+            const labelNombre = document.getElementById('label-nombre');
+
+            if(tipo === 'factura') {
+                divDireccion.style.display = 'block';
+                dirInput.required = true;
+                labelIdent.textContent = 'RUC (13 dígitos):';
+                labelNombre.textContent = 'Razón Social:';
+            } else {
+                divDireccion.style.display = 'none';
+                dirInput.required = false;
+                labelIdent.textContent = 'Cédula de Identidad:';
+                labelNombre.textContent = 'Nombre Completo:';
+            }
+        }
+    </script>
+</body>
+</html>

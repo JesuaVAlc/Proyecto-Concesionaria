@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Historial de Ventas</title>
+</head>
+<body>
+    <a href="{% url 'cerrar_sesion' %}" class="btn-cerrar">Cerrar Sesión</a>
+
+    <div class="dashboard-wrapper">
+        <header class="header-flex">
+            <div class="user-welcome">
+                <h1>HISTORIAL DE VENTAS</h1>
+            </div>
+        </header>
+
+        <a href="{% url 'crear_venta' %}">+ Nueva Venta</a>
+
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>Nº Comprobante</th>
+                    <th>Fecha</th>
+                    <th>Cliente / Razón Social</th>
+                    <th>Vehículo Vendido</th>
+                    <th>Total</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for venta in ventas %}
+                <tr>
+                    <td><strong>#{{ venta.id|stringformat:"05d" }}</strong></td>
+                    <td>{{ venta.fecha_venta|date:"d/m/Y H:i" }}</td>
+                    <td>{{ venta.nombre_razon_social }}<br><span style="font-size:0.8em; color:#666;">CI/RUC: {{ venta.identificacion }}</span></td>
+                    <td>{{ venta.vehiculo.marca }} {{ venta.vehiculo.modelo }}</td>
+                    <td><strong>${{ venta.total|floatformat:2 }}</strong></td>
+                    <td><span class="role-badge">{{ venta.get_tipo_comprobante_display }}</span></td>
+                    <td>
+                        <a href="{% url 'comprobante_venta' venta.pk %}" class="btn-accion btn-activar" style="text-decoration: none;">Ver Factura</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:30px; color:#666;">
+                        No hay ventas registradas en el historial.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p><a href="{% url 'dashboard' %}">Volver al dashboard</a></p>
+    </div>
+</body>
+</html>

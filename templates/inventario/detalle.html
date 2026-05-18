@@ -1,0 +1,226 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Detalle | {{ vehiculo.marca }} {{ vehiculo.modelo }}</title>
+    <style>
+        .detalle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        .galeria-miniaturas { display: flex; gap: 10px; margin-top: 10px; }
+        .galeria-miniaturas img { width: 100px; height: 70px; object-fit: cover; border-radius: 5px; cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
+        .galeria-miniaturas img:hover { border-color: var(--primary-red); }
+        
+        /* Estilos específicos para el modal oscuro tipo Chevrolet */
+        #modal-compra .modal-content-dark {
+            background-color: #1e1e1e; color: #ffffff; padding: 40px; border-radius: 12px; width: 90%; max-width: 800px; text-align: left;
+        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .form-dark-group { display: flex; flex-direction: column; }
+        .form-dark-group label { font-size: 0.75rem; color: #aaaaaa; margin-bottom: 5px; text-transform: uppercase; }
+        .form-dark-group input, .form-dark-group select {
+            background: transparent; border: 1px solid #555; color: white; padding: 10px; border-radius: 4px; outline: none;
+        }
+        .form-dark-group input:focus, .form-dark-group select:focus { border-color: #fff; }
+        
+        
+        .form-dark-group select option {
+            background-color: #1e1e1e; /* Fondo oscuro */
+            color: #ffffff;            /* Texto blanco */
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'lista_vehiculos' %}" class="btn-cerrar">Volver a Galería</a>
+
+    <div class="dashboard-wrapper">
+        <header class="header-flex">
+            <div class="user-welcome">
+                <h1>{{ vehiculo.marca }} {{ vehiculo.modelo }} <span style="font-size: 1rem; background: var(--primary-red); padding: 5px 10px; border-radius: 5px; color: white; vertical-align: middle;">{{ vehiculo.get_condicion_display|upper }}</span></h1>
+            </div>
+        </header>
+
+        <div class="detalle-grid">
+            <div>
+                {% if vehiculo.imagen %}
+                    <img id="imagen-principal" src="{{ vehiculo.imagen.url }}" style="width: 100%; border-radius: 10px; object-fit: cover; height: 350px;">
+                {% else %}
+                    <div style="width: 100%; height: 350px; background: #eee; display: flex; align-items: center; justify-content: center; border-radius: 10px; color: #333;">Sin Imagen</div>
+                {% endif %}
+                
+                <div class="galeria-miniaturas">
+                    {% if vehiculo.imagen %}<img src="{{ vehiculo.imagen.url }}" onclick="cambiarImagen(this.src)">{% endif %}
+                    {% if vehiculo.imagen2 %}<img src="{{ vehiculo.imagen2.url }}" onclick="cambiarImagen(this.src)">{% endif %}
+                    {% if vehiculo.imagen3 %}<img src="{{ vehiculo.imagen3.url }}" onclick="cambiarImagen(this.src)">{% endif %}
+                </div>
+            </div>
+
+            <div>
+                <h2 style="color: var(--primary-red); font-size: 2.5rem; margin-top: 0;">${{ vehiculo.precio }}</h2>
+                <ul style="list-style: none; padding: 0; line-height: 2;">
+                    <li><strong>Año:</strong> {{ vehiculo.anio }}</li>
+                    <li><strong>Chasis:</strong> {{ vehiculo.chasis }}</li>
+                    <li><strong>Disponibilidad:</strong> {{ vehiculo.get_estado_display }}</li>
+                </ul>
+                
+                <h3>Descripción</h3>
+                <p style="text-align: left; color: #444;">{{ vehiculo.descripcion|default:"No hay descripción disponible para este vehículo." }}</p>
+
+                <button onclick="abrirModalCompra()" style="margin-top: 20px; font-size: 1.2rem; padding: 15px;">Comprar Ahora</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-compra" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;">
+        <div class="modal-content-dark">
+            <span onclick="cerrarModalCompra()" style="float: right; cursor: pointer; font-size: 1.5rem; color: #888;">&times;</span>
+            <h2 style="text-align: center; font-size: 1.5rem; margin-bottom: 5px;">Completa el formulario y nos pondremos en contacto contigo.</h2>
+            <p style="text-align: center; color: #aaa; margin-top: 0;">¡Tu nuevo {{ vehiculo.marca }} te espera!</p>
+
+            <form id="formWhatsApp" onsubmit="enviarDatosWhatsApp(event)">
+                <div class="form-grid">
+                    <div class="form-dark-group">
+                        <label>Nombre</label>
+                        <input type="text" id="wa-nombre" required>
+                    </div>
+                    <div class="form-dark-group">
+                        <label>Apellido</label>
+                        <input type="text" id="wa-apellido" required>
+                    </div>
+                    <div class="form-dark-group">
+                        <label>C.I.</label>
+                        <input type="text" id="wa-ci" required>
+                    </div>
+                    <div class="form-dark-group">
+                        <label>Celular</label>
+                        <input type="text" id="wa-celular" required>
+                    </div>
+                    <div class="form-dark-group">
+                        <label>E-mail</label>
+                        <input type="email" id="wa-email" required>
+                    </div>
+                    <div class="form-dark-group">
+                        <label>Ciudad</label>
+                        <select id="wa-ciudad" onchange="actualizarConcesionarios()" required>
+                            <option value="">Seleccione una ciudad</option>
+                            <option value="Quito">Quito</option>
+                            <option value="Guayaquil">Guayaquil</option>
+                            <option value="Cuenca">Cuenca</option>
+                        </select>
+                    </div>
+                    <div class="form-dark-group">
+                        <label>Concesionario</label>
+                        <select id="wa-concesionario" required>
+                            <option value="">Seleccione primero una ciudad</option>
+                        </select>
+                    </div>
+                    <div class="form-dark-group">
+                        <label>Fecha de solicitud</label>
+                        <input type="text" id="wa-fecha" readonly style="background-color: #2a2a2a; color: #888; cursor: not-allowed; border-color: #444;" required>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="wa-terminos" required>
+                    <label for="wa-terminos" style="font-size: 0.8rem; color: #aaa;">Autorizo el tratamiento de mis datos conforme a la Política de Protección de Datos Personales</label>
+                </div>
+
+                <button type="submit" class="btn-enviar-wa">Enviar por WhatsApp</button>
+                <div style="clear: both;"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Diccionario con los concesionarios y sus respectivos números de WhatsApp
+        const datosConcesionarios = {
+            'Quito': [
+                { nombre: 'Matriz Quito', numero: '593997090847' } 
+            ],
+            'Guayaquil': [
+                { nombre: 'Guayaquil Norte - Av. de las Américas', numero: '593960020305' },
+                { nombre: 'Guayaquil Sur - Av. 25 de Julio', numero: '593993220577' }
+            ],
+            'Cuenca': [
+                { nombre: 'Cuenca Motors - Av. España', numero: '593958970631' }
+            ]
+        };
+
+        function cambiarImagen(src) {
+            document.getElementById('imagen-principal').src = src;
+        }
+
+        function abrirModalCompra() {
+            document.getElementById('modal-compra').style.display = 'flex';
+            
+            // Autocompletar la fecha de hoy al abrir el modal (Formato DD/MM/AAAA)
+            const hoy = new Date();
+            const fechaFormateada = hoy.toLocaleDateString('es-EC', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            document.getElementById('wa-fecha').value = fechaFormateada;
+        }
+
+        function cerrarModalCompra() {
+            document.getElementById('modal-compra').style.display = 'none';
+        }
+
+        // Esta función se activa cada vez que el cliente cambia la Ciudad
+        function actualizarConcesionarios() {
+            const ciudadSeleccionada = document.getElementById('wa-ciudad').value;
+            const selectConcesionario = document.getElementById('wa-concesionario');
+
+            // Limpiamos las opciones anteriores
+            selectConcesionario.innerHTML = '<option value="">Seleccione</option>';
+
+            if (ciudadSeleccionada && datosConcesionarios[ciudadSeleccionada]) {
+                // Llenamos el select con los concesionarios de la ciudad seleccionada
+                datosConcesionarios[ciudadSeleccionada].forEach(concesionario => {
+                    const opcion = document.createElement('option');
+                    opcion.value = concesionario.numero; // Guardamos el número de WhatsApp como el valor
+                    opcion.textContent = concesionario.nombre; // Mostramos el nombre al usuario
+                    opcion.setAttribute('data-nombre', concesionario.nombre); // Guardamos el nombre en un data-attribute para el mensaje
+                    selectConcesionario.appendChild(opcion);
+                });
+            } else {
+                selectConcesionario.innerHTML = '<option value="">Seleccione primero una ciudad</option>';
+            }
+        }
+
+        function enviarDatosWhatsApp(event) {
+            event.preventDefault();
+
+            // Recopilar datos
+            const nombre = document.getElementById('wa-nombre').value;
+            const apellido = document.getElementById('wa-apellido').value;
+            const ci = document.getElementById('wa-ci').value;
+            const celular = document.getElementById('wa-celular').value;
+            const email = document.getElementById('wa-email').value;
+            const ciudad = document.getElementById('wa-ciudad').value;
+            const fecha = document.getElementById('wa-fecha').value;
+            
+            // Obtener el concesionario y el número seleccionado
+            const selectConcesionario = document.getElementById('wa-concesionario');
+            const numeroAsesor = selectConcesionario.value; // El valor es el número de celular
+            const nombreConcesionario = selectConcesionario.options[selectConcesionario.selectedIndex].getAttribute('data-nombre');
+            
+            // Construir el mensaje
+            const vehiculoStr = "{{ vehiculo.marca }} {{ vehiculo.modelo }} (Año: {{ vehiculo.anio }})";
+            let mensaje = `Hola, vengo de la plataforma web. Estoy interesado en el vehículo *${vehiculoStr}*.\n\n`;
+            mensaje += `*Mis datos de contacto:*\n`;
+            mensaje += `👤 Nombre: ${nombre} ${apellido}\n`;
+            mensaje += `🆔 C.I.: ${ci}\n`;
+            mensaje += `📱 Celular: ${celular}\n`;
+            mensaje += `📧 Email: ${email}\n`;
+            mensaje += `📍 Ciudad: ${ciudad}\n`;
+            mensaje += `🏢 Concesionario: ${nombreConcesionario}\n`;
+            mensaje += `📅 Fecha de solicitud: ${fecha}`;
+            
+            // Enviar a WhatsApp
+            const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroAsesor}&text=${encodeURIComponent(mensaje)}`;
+            window.open(urlWhatsApp, '_blank');
+            
+            cerrarModalCompra(); 
+        }
+    </script>
+</body>
+</html>

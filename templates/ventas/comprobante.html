@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Comprobante de Venta #{{ venta.id|stringformat:"05d" }}</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #555; display: flex; justify-content: center; padding: 20px; }
+        .factura-container { background: white; width: 800px; padding: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #d32f2f; padding-bottom: 20px; margin-bottom: 20px; }
+        .empresa-info h1 { margin: 0; color: #d32f2f; font-size: 2rem; }
+        .factura-info { text-align: right; }
+        .factura-info h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .cliente-info { border: 1px solid #ccc; padding: 15px; border-radius: 5px; margin-bottom: 20px; background: #fafafa; }
+        .cliente-info p { margin: 5px 0; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th { background: #d32f2f; color: white; padding: 10px; text-align: left; font-size: 0.9rem; }
+        td { border-bottom: 1px solid #eee; padding: 10px; font-size: 0.9rem; }
+        .totales { width: 300px; float: right; }
+        .totales-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
+        .totales-row.gran-total { font-size: 1.2rem; font-weight: bold; border-bottom: none; color: #d32f2f; }
+        .clear { clear: both; }
+        .footer { text-align: center; margin-top: 50px; font-size: 0.8rem; color: #777; border-top: 1px solid #ccc; padding-top: 10px; }
+        .btn-imprimir { background: #333; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; font-size: 1rem; margin-bottom: 20px;}
+        
+        @media print {
+            body { background: white; padding: 0; }
+            .factura-container { box-shadow: none; width: 100%; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <div class="no-print" style="text-align: center;">
+            <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+            <br>
+            <a href="{% url 'dashboard' %}" style="color: white; text-decoration: none;">← Volver al Dashboard</a>
+        </div>
+
+        <div class="factura-container">
+            <div class="header">
+                <div class="empresa-info">
+                    <h1>CONCESIONARIA</h1>
+                    <p style="margin: 5px 0; font-size: 0.85rem; color: #555;">Av. Principal y Secundaria<br>Quito - Ecuador<br>RUC: 1799999999001</p>
+                </div>
+                <div class="factura-info">
+                    <h2>{% if venta.tipo_comprobante == 'factura' %}FACTURA{% else %}NOTA DE VENTA{% endif %}</h2>
+                    <p><strong>Nº:</strong> {{ venta.id|stringformat:"05d" }}</p>
+                    <p><strong>Fecha:</strong> {{ venta.fecha_venta|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+
+            <div class="cliente-info">
+                <p><strong>Razón Social / Nombres:</strong> {{ venta.nombre_razon_social }}</p>
+                <p><strong>Identificación (RUC/CI):</strong> {{ venta.identificacion }}</p>
+                {% if venta.tipo_comprobante == 'factura' %}<p><strong>Dirección:</strong> {{ venta.direccion_fiscal }}</p>{% endif %}
+                <p><strong>Teléfono:</strong> {{ venta.telefono_contacto }} &nbsp;&nbsp;&nbsp; <strong>Vendedor:</strong> {{ venta.vendedor.get_full_name|default:venta.vendedor.username }}</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cant.</th>
+                        <th>Descripción del Vehículo</th>
+                        <th>Chasis</th>
+                        <th style="text-align: right;">V. Unitario</th>
+                        <th style="text-align: right;">V. Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Vehículo {{ venta.vehiculo.marca }} {{ venta.vehiculo.modelo }} (Año: {{ venta.vehiculo.anio }})</td>
+                        <td>{{ venta.vehiculo.chasis }}</td>
+                        <td style="text-align: right;">${{ venta.subtotal|floatformat:2 }}</td>
+                        <td style="text-align: right;">${{ venta.subtotal|floatformat:2 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="totales">
+                <div class="totales-row">
+                    <span>Subtotal (Sin Impuestos):</span>
+                    <span>${{ venta.subtotal|floatformat:2 }}</span>
+                </div>
+                <div class="totales-row">
+                    <span>IVA (15%):</span>
+                    <span>${{ venta.iva|floatformat:2 }}</span>
+                </div>
+                <div class="totales-row gran-total">
+                    <span>TOTAL:</span>
+                    <span>${{ venta.total|floatformat:2 }}</span>
+                </div>
+            </div>
+            <div class="clear"></div>
+
+            <div class="footer">
+                <p>Gracias por su compra. Documento generado por el sistema interno de ventas.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
